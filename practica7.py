@@ -14,7 +14,7 @@ def app():
     top = Tkinter.Tk()
     top.wm_title("Buscador de correos")
     def createSchema(var):
-        schema = Schema(mailFrom=TEXT(stored=True), mailTo=KEYWORD(stored=True), date=TEXT(stored=True), subject=TEXT(stored=True), content=TEXT(stored=True))
+        schema = Schema(mailFrom=TEXT(stored=True), mailTo=KEYWORD(stored=True), date=DATETIME(stored=True), subject=TEXT(stored=True), content=TEXT(stored=True))
         ix = create_in("Correos", schema)
         writer = ix.writer()
         files = os.listdir("Correos")
@@ -43,7 +43,6 @@ def app():
                         mail = parseMail(line)
                     else:
                         name = line
-                        print unicode(name)
                         writer2.add_document(mail=unicode(mail), name=unicode(name))
                 f.close()
         writer2.commit()
@@ -67,6 +66,8 @@ def app():
                 listado.insert(Tkinter.INSERT, "Mail from: "+result["mailFrom"])
                 listado.insert(Tkinter.INSERT, "Mail to: "+result["mailTo"])
                 listado.insert(Tkinter.INSERT, "Subject: "+result["subject"])
+                date = result["date"]
+                listado.insert(Tkinter.INSERT, "Date: "+date[:4]+"-"+date[4:6]+"-"+date[6:])
                 listado.insert(Tkinter.INSERT, "Content: ")
                 content = re.findall("'([^']*)'", result["content"])
                 last = content[-1]
@@ -113,6 +114,8 @@ def app():
         for result in results:
             listado.insert(Tkinter.INSERT, "Mail from: "+result["mailFrom"])
             listado.insert(Tkinter.INSERT, "Mail to: "+result["mailTo"])
+            date = result["date"]
+            listado.insert(Tkinter.INSERT, "Date: "+date[:4]+"-"+date[4:6]+"-"+date[6:])
             listado.insert(Tkinter.INSERT, "Subject: "+result["subject"])
             listado.insert(Tkinter.INSERT, "Content: ")
             content = re.findall("'([^']*)'", result["content"])
