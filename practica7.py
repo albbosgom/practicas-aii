@@ -62,6 +62,7 @@ def app():
             scrollbar = Tkinter.Scrollbar(panel)
             scrollbar.pack(side = Tkinter.RIGHT, fill=Tkinter.Y)
             listado = Tkinter.Text(panel, width=150, height=30, yscrollcommand = scrollbar.set)
+            i = 1
             for result in results:
                 listado.insert(Tkinter.INSERT, "Mail from: "+result["mailFrom"])
                 listado.insert(Tkinter.INSERT, "Mail to: "+result["mailTo"])
@@ -69,11 +70,13 @@ def app():
                 listado.insert(Tkinter.INSERT, "Content: ")
                 content = re.findall("'([^']*)'", result["content"])
                 last = content[-1]
+                i += 1
                 for line in content:
                     if line is not last:
                         line = line[:-2]
                     listado.insert(Tkinter.INSERT,  line+"\n")
                 listado.insert(Tkinter.INSERT, "\n")
+            listado.insert(Tkinter.INSERT, "Este remitente ha enviado "+ str(i-1) +" correos.")
             scrollbar.config( command = listado.yview )  
             listado.pack()  
     
