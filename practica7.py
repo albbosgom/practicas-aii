@@ -16,41 +16,44 @@ def app():
     top = Tkinter.Tk()
     top.wm_title("Buscador de correos")
     
-    def createSchema(var):
-        schema = Schema(mailFrom=TEXT(stored=True), mailTo=KEYWORD(stored=True), date=DATETIME(stored=True), subject=TEXT(stored=True), content=TEXT(stored=True))
-        ix = create_in("Correos", schema)
-        writer = ix.writer()
-        files = os.listdir("Correos")
-        for archivo in files:
-            if archivo.endswith(".txt"):
-                f = open("Correos/"+archivo, "r")
-                writer.add_document(mailFrom=unicode(parseMail(f.readline())), mailTo=unicode(parseMail(f.readline())),
-                                    date= unicode(f.readline()), subject= unicode(f.readline()),
-                                    content=unicode(f.readlines()))
-                f.close()
-        writer.commit()
+    ''' Creates the schemas and indeces for the functions: '''
+    
+    schema = Schema(mailFrom=TEXT(stored=True), mailTo=KEYWORD(stored=True), date=DATETIME(stored=True), subject=TEXT(stored=True), content=TEXT(stored=True))
+    ix = create_in("Correos", schema)
+    writer = ix.writer()
+    files = os.listdir("Correos")
+    for archivo in files:
+        if archivo.endswith(".txt"):
+            f = open("Correos/" + archivo, "r")
+            writer.add_document(mailFrom=unicode(parseMail(f.readline())), mailTo=unicode(parseMail(f.readline())),
+                                date=unicode(f.readline()), subject=unicode(f.readline()),
+                                content=unicode(f.readlines()))
+            f.close()
+    writer.commit()
         
-        schema2 = Schema(mail=TEXT(stored=True), name=TEXT(stored=True))
-        ix2 = create_in("Agenda", schema2)
-        writer2 = ix2.writer()
-        files = os.listdir("Agenda")
-        for archivo in files:
-            if archivo.endswith(".txt"):
-                f = open("Agenda/"+archivo, "r")
-                f2 = f.read()
-                lines = f2.splitlines()
-                mail = ""
-                name = ""
-                for i, line in enumerate(lines):
-                    if i%2 == 0:
-                        mail = parseMail(line)
-                    else:
-                        name = line
-                        writer2.add_document(mail=unicode(mail), name=unicode(name))
-                f.close()
-        writer2.commit()
-        
-        
+    schema2 = Schema(mail=TEXT(stored=True), name=TEXT(stored=True))
+    ix2 = create_in("Agenda", schema2)
+    writer2 = ix2.writer()
+    files = os.listdir("Agenda")
+    for archivo in files:
+        if archivo.endswith(".txt"):
+            f = open("Agenda/" + archivo, "r")
+            f2 = f.read()
+            lines = f2.splitlines()
+            mail = ""
+            name = ""
+            for i, line in enumerate(lines):
+                if i % 2 == 0:
+                    mail = parseMail(line)
+                else:
+                    name = line
+                    writer2.add_document(mail=unicode(mail), name=unicode(name))
+            f.close()
+    writer2.commit()
+    
+    ''' Method for the first exercise '''
+    
+    def numeroDeCorreos(var):       
         with ix.searcher() as searcher:
             query = QueryParser("name", ix2.schema)
             qp = query.parse(unicode(var))
@@ -90,45 +93,11 @@ def app():
         lbl.pack(fill=Tkinter.X)
         var = Tkinter.StringVar()
         ctrl = Tkinter.Entry(panel, textvariable=var)
-        ctrl.bind("<Return>", lambda(x): createSchema(var.get()))
+        ctrl.bind("<Return>", lambda(x): numeroDeCorreos(var.get()))
         ctrl.pack(fill=Tkinter.X)
         panel.mainloop()
     
     def buscarRemitentesAsuntos(var):
-        schema = Schema(mailFrom=TEXT(stored=True), mailTo=KEYWORD(stored=True), date=DATETIME(stored=True), subject=TEXT(stored=True), content=TEXT(stored=True))
-        ix = create_in("Correos", schema)
-        writer = ix.writer()
-        files = os.listdir("Correos")
-        for archivo in files:
-            if archivo.endswith(".txt"):
-                f = open("Correos/"+archivo, "r")
-                writer.add_document(mailFrom=unicode(parseMail(f.readline())), mailTo=unicode(parseMail(f.readline())),
-                                    date= unicode(f.readline()), subject= unicode(f.readline()),
-                                    content=unicode(f.readlines()))
-                f.close()
-        writer.commit()
-        
-        schema2 = Schema(mail=TEXT(stored=True), name=TEXT(stored=True))
-        ix2 = create_in("Agenda", schema2)
-        writer2 = ix2.writer()
-        files = os.listdir("Agenda")
-        for archivo in files:
-            if archivo.endswith(".txt"):
-                f = open("Agenda/"+archivo, "r")
-                f2 = f.read()
-                lines = f2.splitlines()
-                mail = ""
-                name = ""
-                for i, line in enumerate(lines):
-                    if i%2 == 0:
-                        mail = parseMail(line)
-                    else:
-                        name = line
-                        writer2.add_document(mail=unicode(mail), name=unicode(name))
-                f.close()
-        writer2.commit()
-        
-        
         with ix.searcher() as searcher:
             query = QueryParser("content", ix.schema).parse(unicode(var))
             results = searcher.search(query)
@@ -158,18 +127,6 @@ def app():
 
 
     def searchSubject(var):
-        schema = Schema(mailFrom=TEXT(stored=True), mailTo=KEYWORD(stored=True), date=TEXT(stored=True), subject=TEXT(stored=True), content=TEXT(stored=True))
-        ix = create_in("Correos", schema)
-        writer = ix.writer()
-        files = os.listdir("Correos")
-        for archivo in files:
-            if archivo.endswith(".txt"):
-                f = open("Correos/"+archivo, "r")
-                writer.add_document(mailFrom=unicode(parseMail(f.readline())), mailTo=unicode(parseMail(f.readline())),
-                                    date= unicode(f.readline()), subject= unicode(f.readline()),
-                                    content=unicode(f.readlines()))
-                f.close()
-        writer.commit()
         query = QueryParser("subject", ix.schema).parse(var)
         results = ix.searcher().search(query)
         panel = Tkinter.Toplevel()
