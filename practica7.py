@@ -253,8 +253,8 @@ def app():
                     documap[docukey] = docu
             model = Model(documents=documents, weight=TFIDF)
             docu = documap[int(var.get())]
-            tupla = max((model.cosine_similarity(docu, documap[k]) if docu != documap[k] else -1.0, k) for k in documap)
-            tkMessageBox.showinfo("Tk", "El documento que mas se parece es el " + str(tupla[1]) + ", con un " + str(tupla[0]) + " de similitud")
+            tupla = model.neighbors(docu, top=1)[0]
+            tkMessageBox.showinfo("Tk", "El documento que mas se parece es el " + tupla[1].name[0:-4] + ", con un " + str(tupla[0]) + " de similitud")
         def buscaCorreo(x):
             try:
                 buscaCorreo2(x)
