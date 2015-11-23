@@ -91,7 +91,7 @@ def app():
         ctrl.pack(fill=Tkinter.X)
         panel.mainloop()
 
-
+    
     def searchSubject(var):
         schema = Schema(mailFrom=TEXT(stored=True), mailTo=KEYWORD(stored=True), date=TEXT(stored=True), subject=TEXT(stored=True), content=TEXT(stored=True))
         ix = create_in("Correos", schema)
@@ -142,6 +142,69 @@ def app():
         panel.mainloop()
     asunto = Tkinter.Button(top, text="Buscar correos por asunto", command = buscarPorAsunto)
     asunto.pack(fill=Tkinter.X)
+    
+    def searchByRank(entry):
+        schema = Schema(mailFrom=TEXT(stored=True), mailTo=KEYWORD(stored=True), date=DATETIME(stored=True), subject=TEXT(stored=True), content=TEXT(stored=True))
+        ix = create_in("Correos", schema)
+        writer = ix.writer()
+        files = os.listdir("Correos")
+        for archivo in files:
+            if archivo.endswith(".txt"):
+                f = open("Correos/"+archivo, "r")
+                writer.add_document(mailFrom=unicode(parseMail(f.readline())), mailTo=unicode(parseMail(f.readline())),
+                                    date= unicode(f.readline()), subject= unicode(f.readline()),
+                                    content=unicode(f.readlines()))
+                f.close()
+        writer.commit()
+        subtop1 = Tkinter.Tk()
+        scrollbarY = Tkinter.Scrollbar(subtop1)
+        scrollbarX = Tkinter.Scrollbar(subtop1, orient=Tkinter.HORIZONTAL)
+        scrollbarY.pack(side=Tkinter.RIGHT, fill=Tkinter.Y)
+        scrollbarX.pack(side=Tkinter.BOTTOM, fill=Tkinter.X)
+        LB1 = Tkinter.Listbox(subtop1, width=80, height=12, yscrollcommand=scrollbarY.set, xscrollcommand=scrollbarX.set)
+        scrollbarY.config(command=LB1.yview)
+        scrollbarX.config(command=LB1.xview)
+        fechas = entry.split("-")
+        flinferior = fechas[0]
+        flisuperior = fechas[1]
+        qp = QueryParser('date', schema= ix.schema)
+        q = qp.parse(u"date:["+flinferior+" to "+ flisuperior+"]")
+        with ix.searcher() as s:
+                results = s.search(q)
+                i = 1
+                pos = 1
+                for result in results:
+                    LB1.insert(pos, "Correo "+ str(i))
+                    pos += 1
+                    LB1.insert(pos, "Remitentes: "+ result['mailFrom'])
+                    pos += 1
+                    LB1.insert(pos, "Destinatarios: "+ result['mailTo'])
+                    pos += 1
+                    LB1.insert(pos, "Subject: "+ result['subject'])
+                    pos += 1
+                    LB1.insert(pos, "\n")
+                    pos += 1
+                    i += 1
+                LB1.insert(pos, "En este rango de fechas se han enviado "+ str(i-1) +" correos.")
+                pos += 1
+        LB1.pack()
+        subtop1.mainloop()
+        
+    
+    def buscarPorRangoFecha():
+        var = Tkinter.StringVar(value='YYYYMMDD-YYYYMMDD')
+        panel = Tkinter.Toplevel()
+        L1 = Tkinter.Label(panel, text="Introduzca las dos fechas"+"\n"+ "separadas por un guion, "+"\n"+ "en el siguiente formato:")
+        E1 = Tkinter.Entry(panel, width=25, textvariable = var)
+        def buscar():
+            searchByRank(var.get())
+        B1 = Tkinter.Button(panel, text ="Buscar", command = buscar)
+        L1.pack(side = Tkinter.LEFT)
+        B1.pack(side = Tkinter.RIGHT)
+        E1.pack(side = Tkinter.RIGHT)
+    
+    byRango = Tkinter.Button(top, text ="Buscar correos por rango de fecha", command = buscarPorRangoFecha)    
+    byRango.pack(fill=Tkinter.X)
     
     top.mainloop()
     
