@@ -1,0 +1,4 @@
+#Ignores para el whoosh
+MAIN_WRITELOCK
+*.seg
+*.toc
