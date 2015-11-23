@@ -1,8 +1,10 @@
 import os.path
 import Tkinter
+import tkMessageBox
 from whoosh.index import create_in
 from whoosh.fields import * 
 from whoosh.qparser import QueryParser
+from pattern.vector import Document, Model, TFIDF
 def parseMail(mail):
     correo = mail
     if "arroba" in mail:
@@ -210,6 +212,38 @@ def app():
     
     asunto = Tkinter.Button(top, text="Buscar correos por asunto", command = buscarPorAsunto)
     asunto.pack(fill=Tkinter.X)
+    
+    def buscarCorreoSimilar():
+        panel = Tkinter.Toplevel()
+        lbl = Tkinter.Label(panel, text="Introduzca numero del correo: ")
+        lbl.pack(fill=Tkinter.X)
+        var = Tkinter.StringVar()
+        ctrl = Tkinter.Entry(panel, textvariable=var)
+        def buscaCorreo(x):
+            documents=[]
+            documap={}
+            for archivo in os.listdir("Correos"):
+                if archivo.endswith(".txt"):
+                    f = open("Correos/" + archivo, "r")
+                    f.readline()
+                    f.readline()
+                    f.readline()
+                    f.readline()
+                    mailbody = f.read()
+                    f.close()
+                    docu = Document(mailbody, name=archivo)
+                    documents.append(docu)
+                    docukey = int(archivo[0:-4])
+                    documap[docukey] = docu
+            model = Model(documents=documents,weight=TFIDF)
+            docu = documap[int(var.get())]
+            tupla = max((model.cosine_similarity(docu, documap[k]) if docu!=documap[k] else -1.0,k) for k in documap)
+            tkMessageBox.showinfo("Tk", "El documento que mas se parece es el " + str(tupla[1]) + ", con un " + str(tupla[0]) + " de similitud")
+        ctrl.bind("<Return>", buscaCorreo)
+        ctrl.pack(fill=Tkinter.X)
+        panel.mainloop()
+    bcs = Tkinter.Button(top, text="Buscar correos similares", command=buscarCorreoSimilar)
+    bcs.pack(fill=Tkinter.X)
     
     top.mainloop()
     
