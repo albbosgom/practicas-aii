@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block pagetitle %}
+	Peliculas
+{% endblock %}
+{% block pageheader %}
+	<h1>Pel&iacute;culas por a&ntilde;o</h1>
+{% endblock %}
+{% block pagebody %}
+	{% for peli in lista %}
+		<li>
+			{{peli.titulo}}
+		</li>
+	{% endfor %}
+
+{% endblock %}
