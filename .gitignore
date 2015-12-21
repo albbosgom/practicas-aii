@@ -2,3 +2,6 @@
 MAIN_WRITELOCK
 *.seg
 *.toc
+*.pyc
+*.sqlite3
+migrations/

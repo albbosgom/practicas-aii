@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{% block pagetitle %}{% endblock %} - Pr&aacute;ctica 10</title>
+	{% load staticfiles %}
+	<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+	<link rel="stylesheet" href="{% static "css/bootstrap-theme.min.css" %}">
+	<link rel="stylesheet" href="{% static "css/stickyfooter.css" %}">
+</head>
+<body>
+	<div class="page-header">
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Pr&aacute;ctica 10</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="/">Inicio</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	</div>
+	
+	<div class="container">
+		{% block pageheader %}{% endblock %}
+		{% block pagebody %}{% endblock %}
+	</div>
+	
+	<footer>
+		<div class="container">
+			<p>&copy; 2015; Amodeo Zurbano, Fernando; Bosch G&oacute;mez, Alberto; And&uacute;jar Luque, Jos&eacute; Antonio</p>
+		</div>
+	</footer>
+	<script src="{% static "js/jquery-1.11.3.min.js" %}"></script>
+	<script src="{% static "js/bootstrap.min.js" %}"></script>
+</body>
+</html>
