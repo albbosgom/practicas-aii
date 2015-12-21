@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response, redirect
+from mainapp.models import Usuario, Ocupacion
 from Practica10.settings import BASE_DIR
 import mainapp.models as models
 import os
@@ -30,3 +31,10 @@ def populate(request):
 
 def main(request):
     return render_to_response('main.html')
+
+def lista_usuarios(request):
+    usuarios = Usuario.objects.all()
+    ocupaciones = Ocupacion.objects.all()
+    print usuarios
+    print ocupaciones
+    return render_to_response('usuarios.html', {'lista':usuarios, 'ocupaciones':ocupaciones})
