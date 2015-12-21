@@ -3,6 +3,7 @@ from Practica10.settings import BASE_DIR
 import mainapp.models as models
 import os
 from datetime import datetime
+from django.utils import timezone
 
 def populate(request):
     occupations = {}
@@ -24,7 +25,7 @@ def populate(request):
         films[int(line[0])] = u
     for line in open(os.path.join(BASE_DIR, "data/u.data"), "r"):
         line = line.strip().split('\t')
-        models.Puntuacion.objects.create(usuario=users[int(line[0])], pelicula=films[int(line[1])], puntuacion=int(line[2]), momento=datetime.now())
+        models.Puntuacion.objects.create(usuario=users[int(line[0])], pelicula=films[int(line[1])], puntuacion=int(line[2]), momento=timezone.now())
     return redirect('/')
 
 def main(request):

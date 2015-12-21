@@ -32,6 +32,6 @@ class Puntuacion(models.Model):
     puntuacion = models.SmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     momento = models.DateTimeField()
     def __unicode__(self):
-        return u"{} puntua '{}' con {}" % (self.usuario, self.pelicula, self.puntuacion)
+        return str(self.usuario) + " puntua '" + str(self.pelicula) + "' con " + str(self.puntuacion)
     class Meta:
         unique_together = ("usuario", "pelicula")
