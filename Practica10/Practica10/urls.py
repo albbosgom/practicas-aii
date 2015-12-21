@@ -18,5 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^$', 'mainapp.views.main'),
+    url(r'^populate/$', 'mainapp.views.populate'),
     url(r'^admin/', include(admin.site.urls)),
 ]
