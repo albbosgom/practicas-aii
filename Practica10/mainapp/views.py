@@ -85,4 +85,82 @@ def usuario(request):
     else:
         formulario = usuarioForm()
     return render_to_response('usuarioForm.html', {'formulario':formulario}, context_instance=RequestContext(request))
-  
+
+def similaridad(a,b,pmap,pavg):
+    from math import sqrt
+    usuarios = []
+    for usu in pmap:
+        p = pmap[usu]
+        if (a in p) and (b in p):
+            usuarios.append(usu)
+    if not usuarios:
+        return 0
+    num,denA,denB = 0,0,0
+    for usu in usuarios:
+        rU = pavg[usu]
+        rA = pmap[usu][a]
+        rB = pmap[usu][b]
+        num += (rA-rU)*(rB-rU)
+        denA += (rA-rU)*(rA-rU)
+        denB += (rB-rU)*(rB-rU)
+    if denA==0 or denB==0:
+        return 0
+    return num / sqrt(denA*denB)
+
+def recomienda_pelis(usuario,N=2):
+    todoPelis = {}
+    pmap,pavg,pcnt = {}, {}, {}
+    usuario_id = usuario.id
+    for puntu in Puntuacion.objects.all():
+        pid = puntu.usuario.id
+        pel = puntu.pelicula.titulo
+        if pel not in todoPelis:
+            todoPelis[pel] = False
+        if pid==usuario_id:
+            todoPelis[pel] = True
+        pun = puntu.puntuacion
+        if pid not in pmap:
+            mapp = {}
+            pmap[pid] = mapp
+            pavg[pid] = 0
+            pcnt[pid] = 1
+        else:
+            mapp = pmap[pid]
+            pavg[pid] += float(pun)
+            pcnt[pid] += 1
+        mapp[pel] = pun
+    for k in pavg:
+        pavg[k] /= pcnt[k]
+    print pavg
+    la = []
+    for peli in todoPelis:
+        if todoPelis[peli]:
+            continue
+        num,den = 0,0
+        for punt in todoPelis:
+            if not todoPelis[punt]:
+                continue
+            sim = similaridad(peli,punt,pmap,pavg)
+            rat = pmap[usuario_id][punt]
+            num += sim*rat
+            den += sim
+            print sim,rat
+        if den==0:
+            continue
+        la.append((num/den,peli))
+    la.sort(reverse=True)
+    return la[0:N]
+
+def vista_recomienda_pelis(request, usuario):
+    pelis = recomienda_pelis(usuario)
+    return render_to_response('pelisrec.html', {'pelis':pelis})
+
+def pelis_recomendadas(request):
+    if request.method=='POST':
+        formulario = usuarioForm(request.POST)
+        if formulario.is_valid():
+            usuario = Usuario.objects.get(id = formulario.cleaned_data['id'])
+            return vista_recomienda_pelis(request, usuario)
+    else:
+        formulario = usuarioForm()
+    return render_to_response('usuarioForm.html', {'formulario':formulario}, context_instance=RequestContext(request))

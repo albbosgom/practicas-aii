@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^peliculasPorAnho/', 'mainapp.views.pelicula'),
     url(r'^usuariosPorId/', 'mainapp.views.usuario'),
     url(r'^usuarios/$','mainapp.views.lista_usuarios'),
+    url(r'^peliculasRecomendadas/$','mainapp.views.pelis_recomendadas'),
 ]
 

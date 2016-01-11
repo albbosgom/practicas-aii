@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block pagetitle %}
+	Peliculas
+{% endblock %}
+{% block pageheader %}
+	<h1>Pel&iacute;culas recomendadas</h1>
+{% endblock %}
+{% block pagebody %}
+{% for rec in pelis %}
+<li>{{rec.1}}</li>
+{% endfor %}
+{% endblock %}
