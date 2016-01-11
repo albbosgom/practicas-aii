@@ -5,6 +5,6 @@ from mainapp.models import Pelicula
 from django.db.models.fields import DateField
 
 class peliculaForm(forms.Form):
-    anhoEstreno = forms.DateField(label='Introducir fecha con formato YYYY-MM-DD')
+    idpeli = forms.IntegerField(label='Introducir ID de película (Números del 1-3364)')
     
     

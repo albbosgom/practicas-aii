@@ -3,13 +3,10 @@
 	Peliculas
 {% endblock %}
 {% block pageheader %}
-	<h1>Pel&iacute;culas por a&ntilde;o</h1>
+	<h1>Pel&iacute;culas relacionadas con {{pelicula}}</h1>
 {% endblock %}
 {% block pagebody %}
-	{% for peli in lista %}
-		<li>
-			{{peli.titulo}}
-		</li>
-	{% endfor %}
-
+{% for rec in similar %}
+<li>{{rec}}</li>
+{% endfor %}
 {% endblock %}

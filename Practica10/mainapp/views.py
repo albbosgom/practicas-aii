@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from django.shortcuts import render_to_response, redirect
-from mainapp.models import Usuario, Ocupacion, Pelicula
+from mainapp.models import Usuario, Ocupacion, Pelicula, Puntuacion
 from mainapp.forms import peliculaForm
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
@@ -9,6 +11,7 @@ from django.core.mail import EmailMessage
 from Practica10.settings import BASE_DIR
 import mainapp.models as models
 import os
+import recommendations
 from datetime import datetime
 from django.utils import timezone
 
@@ -38,22 +41,32 @@ def populate(request):
 def main(request):
     return render_to_response('main.html')
 
-def lista_peliculas(request, p):
-    return render_to_response('peliculas.html', {'lista':p})
+def lista_peliculas(request, p, r):
+    return render_to_response('peliculas.html', {'pelicula':p, 'similar':r})
 
 def pelicula(request):
     if request.method=='POST':
         formulario = peliculaForm(request.POST)
         if formulario.is_valid():
-            pelis = Pelicula.objects.filter(fechaestreno = formulario.cleaned_data['anhoEstreno'])
-            return lista_peliculas(request,pelis)
+            # Cogemos la película de la que queremos recomendaciones
+            pelicula = Pelicula.objects.get(id = formulario.cleaned_data['idpeli'])
+            usuarios = Usuario.objects.all()
+            puntuaciones = {}
+            #En este for metemos en puntuaciones todas las puntuaciones siguiendo el formato de "critics" en recommendations.py
+            for user in usuarios:
+                puntuacions = Puntuacion.objects.filter(usuario = user)
+                pelis = {}
+                for puntuacion in puntuacions:
+                    pelis[puntuacion.pelicula.titulo] = puntuacion.puntuacion
+                puntuaciones[user.id] = pelis
+            #Una vez en el formato, simplemente calculamos los 3 más similares
+            similar = recommendations.calculateSimilarItems(puntuaciones, 3)
+            #Y ahora cogemos las recomendaciones de la película que queremos
+            res = similar[pelicula.titulo]
+            #Y las pasamos por parámetro
+            recomen= [res[0][1],res[1][1],res[2][1]]                         
+            return lista_peliculas(request,pelicula, recomen)
     else:
         formulario = peliculaForm()
     return render_to_response('peliculaForm.html', {'formulario':formulario}, context_instance=RequestContext(request))
 
-def lista_usuarios(request):
-    usuarios = Usuario.objects.all()
-    ocupaciones = Ocupacion.objects.all()
-    print usuarios
-    print ocupaciones
-    return render_to_response('usuarios.html', {'lista':usuarios, 'ocupaciones':ocupaciones})

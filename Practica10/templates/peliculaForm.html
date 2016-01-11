@@ -3,11 +3,15 @@
 	Buscar pel&iacute;culas por a&ntilde;o
 {% endblock %}
 {% block pageheader %}
-	<h1>Buscar pel&iacute;culas por a&ntilde;o</h1>
+	<h1>Buscar pel&iacute;culas recomendadas por id</h1>
 {% endblock %}
 {% block pagebody %}
+<p><b>NOTA:</b> como se trata de una práctica cuyo objetivo es aprender cómo usar un sistema de recomendaciones, el proceso es realmente lento
+porque calculamos todas las recomendaciones de TODAS las películas y luego se accede a la de la película seleccionada. Normalmente se
+guardarían las recomendaciones y solo se accedería a ese documento o tabla.</p>
 	<form id='formulario' method='post' action=''>{% csrf_token %}
 		{{formulario.as_p}}
 		<p><input type='submit' value='Buscar'/></p>
 	</form>
+	
 {% endblock %}
