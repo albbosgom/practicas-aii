@@ -2,7 +2,7 @@
 
 from django.shortcuts import render_to_response, redirect
 from mainapp.models import Usuario, Ocupacion, Pelicula, Puntuacion
-from mainapp.forms import peliculaForm
+from mainapp.forms import peliculaForm, usuarioForm
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -70,3 +70,19 @@ def pelicula(request):
         formulario = peliculaForm()
     return render_to_response('peliculaForm.html', {'formulario':formulario}, context_instance=RequestContext(request))
 
+def lista_usuarios(request, usuario):
+    peliculas={}
+    puntuaciones = Puntuacion.objects.filter(usuario = usuario)
+    
+    return render_to_response('usuarios.html', {'lista':puntuaciones})
+
+def usuario(request):
+    if request.method=='POST':
+        formulario = usuarioForm(request.POST)
+        if formulario.is_valid():
+            usuario = Usuario.objects.filter(id = formulario.cleaned_data['id'])
+            return lista_usuarios(request,usuario)
+    else:
+        formulario = usuarioForm()
+    return render_to_response('usuarioForm.html', {'formulario':formulario}, context_instance=RequestContext(request))
+  

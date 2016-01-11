@@ -1,0 +1,25 @@
+{% extends 'base.html' %} 
+{% comment %} Aqui van comentarios {% endcomment %} 
+{% block pagetitle %} Inicio {% endblock %} 
+{% block pageheader %}
+<h1>Puntuaciones</h1> {% endblock %} 
+{% block pagebody %} 
+
+
+<h3>Pel&iacute;culas valoradas:</h3>
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>T&iacute;tulos de las pel&iacute;culas</th>
+        <th>Puntuacion</th>
+      </tr>
+    </thead>
+    <tbody>
+{% for elemento in lista %}
+<tr>      
+<td>{{elemento.pelicula.titulo}}</td>
+<td>{{elemento.puntuacion}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

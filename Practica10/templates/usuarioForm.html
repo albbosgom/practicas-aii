@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block pagetitle %}
+	Buscar usuarios por id
+{% endblock %}
+{% block pageheader %}
+	<h1>Buscar usuarios por id</h1>
+{% endblock %}
+{% block pagebody %}
+	<form id='formulario' method='post' action=''>{% csrf_token %}
+		{{formulario.as_p}}
+		<p><input type='submit' value='Buscar'/></p>
+	</form>
+{% endblock %}

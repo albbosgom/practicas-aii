@@ -23,5 +23,7 @@ urlpatterns = [
     url(r'^populate/$', 'mainapp.views.populate'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^peliculasPorAnho/', 'mainapp.views.pelicula'),
+    url(r'^usuariosPorId/', 'mainapp.views.usuario'),
+    url(r'^usuarios/$','mainapp.views.lista_usuarios'),
 ]
 
