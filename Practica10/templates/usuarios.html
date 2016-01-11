@@ -2,29 +2,24 @@
 {% comment %} Aqui van comentarios {% endcomment %} 
 {% block pagetitle %} Inicio {% endblock %} 
 {% block pageheader %}
-<h1>Usuarios por ocupación</h1> {% endblock %} 
+<h1>Puntuaciones</h1> {% endblock %} 
 {% block pagebody %} 
 
-{% for ocupacion in ocupaciones%}
-<h3>{{ocupacion.nombre}}</h3>
+
+<h3>Pel&iacute;culas valoradas:</h3>
 <table class="table table-striped">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Edad</th>
-        <th>Código Postal</th>
+        <th>T&iacute;tulos de las pel&iacute;culas</th>
+        <th>Puntuacion</th>
       </tr>
     </thead>
     <tbody>
 {% for elemento in lista %}
-{% if ocupacion == elemento.ocupacion%}
 <tr>      
-<td><strong>{{elemento.id}}</strong></td>
-<td>{{elemento.edad}}</td>
-<td>{{elemento.codigopostal}}</td>
+<td>{{elemento.pelicula.titulo}}</td>
+<td>{{elemento.puntuacion}}</td>
 </tr>
-{%endif%}
 {% endfor %}
 </table>
-{%endfor%}
-{% endblock %} 
+{% endblock %}
